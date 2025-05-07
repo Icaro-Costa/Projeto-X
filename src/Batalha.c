@@ -10,23 +10,19 @@
 //Tamanho 80x24
 #define OPCOES_BOX_START_X 5
 #define OPCOES_BOX_START_Y 16
-#define OPCOES_BOX_WIDTH   70 // Largura total, incluindo as bordas verticais
-#define OPCOES_BOX_HEIGHT  7  // Altura total, incluindo as bordas horizontais
+#define OPCOES_BOX_WIDTH   70
+#define OPCOES_BOX_HEIGHT  7
 
 int realizarDefesa() {
-
-    int resultado = 0;
-    int dado = rolarDado20();
+    int resultadoDado = rolarDado20();
 
     screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
     screenSetColor(WHITE, BLACK);
 
-    resultado = dado;
-
-    printf("Você defendeu!          ");
     screenUpdate();
     usleep(50000);
-    return resultado;
+
+    return resultadoDado;
 }
 
 int realizarAtaque() {
@@ -63,19 +59,17 @@ int realizarCura() {
     return resultado;
 }
 
-int realizarIrritar() {
+//--------------------------------------------------
 
-    int resultado = 0;
-    int dado = rolarDado20();
+int realizarIrritar() {
+    int resultadoDado = rolarDado20();
+
 
     screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
     screenSetColor(WHITE, BLACK);
-
-    resultado = dado;
-
-    printf("Irritou o inimigo! ");
+    printf("Você tenta provocar o inimigo... [%d]", resultadoDado);
     screenUpdate();
     usleep(50000);
-    return resultado;
+
+    return resultadoDado;
 }
-// --------------------------------------------------------

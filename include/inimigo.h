@@ -6,14 +6,21 @@
 typedef struct {
     int vida;
     int vidaMaxima;
-    int ataque;
-    int defesa;
 
-    // Comportamento do inimigo
-    int acoesDisponiveis[4]; // Índices das ações (0: Ataque, 1: Defesa, 2: Cura, 3: Irritar)
+    int ataqueBase;         // Ataque original/base do inimigo
+    int defesaBase;         // Defesa original/base do inimigo
+
+    int ataqueAtual;        // Ataque modificado por efeitos (ex: raiva)
+    int defesaAtual;        // Defesa modificada por efeitos
+
+    int bonusDefesaAtiva;   // Bônus da ação "Defender" do inimigo
+
+    int nivelRaiva;
+    int turnosDeRaivaRestantes;
+
+    int acoesDisponiveis[4];
     int numAcoesDisponiveis;
-
-    bool podeUsarIrritar; // Flag para controlar se o inimigo pode usar "Irritar"
+    bool podeUsarIrritar;
 } Inimigo;
 
 void inicializarInimigo(Inimigo *inimigo, int vida, int ataque, int defesa);

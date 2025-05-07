@@ -74,7 +74,7 @@ Após a compilação bem-sucedida:
 
 ├── Makefile    # Arquivo para automatizar a compilação
 
-└── LICENSE     # Arquivo de licença (ex: MIT) - Opcional
+└── LICENSE     # Arquivo de licença (ex: MIT) 
 
 
 

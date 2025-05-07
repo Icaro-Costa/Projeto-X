@@ -82,7 +82,7 @@ void desenharBoxOpcoes() {
     }
 
     // --- Posicionar e Escrever o Texto das Opções ---
-    screenSetColor(RED, WHITE); // Texto vermelho, fundo branco para o texto das opções
+    screenSetColor(RED, WHITE);
 
     screenGotoxy(OPCAO_INNER_START_X + OPCAO1_INNER_REL_X, OPCAO_INNER_START_Y + OPCAO1_INNER_REL_Y);
     printf("Aperte Q para atk");
@@ -96,7 +96,6 @@ void desenharBoxOpcoes() {
     screenGotoxy(OPCAO_INNER_START_X + OPCAO4_INNER_REL_X, OPCAO_INNER_START_Y + OPCAO4_INNER_REL_Y);
     printf("Aperte R para Irritar");
 
-    screenSetColor(WHITE, BLACK); // Reseta a cor para o normal
-
+    screenSetColor(WHITE, BLACK); /
 
 }

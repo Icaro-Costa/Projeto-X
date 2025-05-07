@@ -68,10 +68,6 @@ Após a compilação bem-sucedida:
 
 ├── include/    # Arquivos de cabeçalho (.h)
 
-├── data/       # Arquivos de configuração (.txt) para status iniciais
-
-├── test/       # Código dos testes unitários (Unity)
-
 ├── build/      # Saídas de compilação (.o, executáveis) - Ignorado pelo Git
 
 ├── README.md   # Este arquivo
@@ -88,4 +84,4 @@ Após a compilação bem-sucedida:
 * Compilador: GCC (ou outro compatível)
 * Build System: Make
 * Interface de Terminal: CLI-lib
-* Testes Unitários: Unity Framework
+* 

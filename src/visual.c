@@ -96,6 +96,6 @@ void desenharBoxOpcoes() {
     screenGotoxy(OPCAO_INNER_START_X + OPCAO4_INNER_REL_X, OPCAO_INNER_START_Y + OPCAO4_INNER_REL_Y);
     printf("Aperte R para Irritar");
 
-    screenSetColor(WHITE, BLACK); /
+    screenSetColor(WHITE, BLACK);
 
 }

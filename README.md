@@ -84,4 +84,3 @@ Após a compilação bem-sucedida:
 * Compilador: GCC (ou outro compatível)
 * Build System: Make
 * Interface de Terminal: CLI-lib
-* 

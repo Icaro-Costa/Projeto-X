@@ -1,14 +1,17 @@
 #include "../include/screen.h"
 #include "../include/keyboard.h"
-#include "../include/utils.h"
 #include "../include/inimigo.h"
 
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "../include/barradevida.h"
 #include "../include/bonecos.h"
+
+#include "../include/GerenciarTurnoInimigo.h"
+#include "../include/GerenciarTurnoJogador.h"
 
 #include <stdbool.h>
 

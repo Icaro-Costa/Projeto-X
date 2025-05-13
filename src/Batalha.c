@@ -1,17 +1,10 @@
 #include "../include/Batalha.h"
 #include "../include/screen.h"
-#include "../include/timer.h"
 #include "../include/Dado.h"
+#include "../include/game_config.h"
 
 #include <stdio.h>
 #include <unistd.h>
-
-// Definições de tamanho e posição da *área total* da box com borda
-//Tamanho 80x24
-#define OPCOES_BOX_START_X 5
-#define OPCOES_BOX_START_Y 16
-#define OPCOES_BOX_WIDTH   70
-#define OPCOES_BOX_HEIGHT  7
 
 int realizarDefesa() {
     int resultadoDado = rolarDado20();
@@ -63,7 +56,6 @@ int realizarCura() {
 
 int realizarIrritar() {
     int resultadoDado = rolarDado20();
-
 
     screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
     screenSetColor(WHITE, BLACK);

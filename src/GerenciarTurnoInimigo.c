@@ -1,17 +1,9 @@
 #include "../include/screen.h"
-#include "../include/keyboard.h"
-#include "../include/timer.h"
-#include "../include/Batalha.h"
-#include "../include/visual.h"
 #include "../include/inimigo.h"
-#include "../include/barradevida.h"
 #include "../include/GerenciarTurnoInimigo.h"
 #include "../include/Dado.h"
 
 #include <stdio.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 
 #define OPCOES_BOX_START_X 5

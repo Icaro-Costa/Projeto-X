@@ -16,7 +16,7 @@
 
 Projeto-X é um jogo de RPG de turnos desenvolvido em linguagem C utilizando a biblioteca CLI-lib para interação no terminal. O jogador assume o papel de um herói que deve enfrentar 5 inimigos em batalhas sequenciais para vencer.
 
-O jogo implementa mecânicas de combate baseadas em atributos como HP, Ataque e Defesa, além de um sistema de "Raiva" que pode ser manipulado pelo jogador e afeta os inimigos de maneiras diferentes. As ações de combate utilizam um sistema de rolagem de dados (d20) para determinar o acerto dos ataques. Os status iniciais dos personagens são carregados a partir de arquivos de configuração na pasta `data/`.
+O jogo implementa mecânicas de combate baseadas em atributos como HP, Ataque e Defesa, além de um sistema de "Raiva" que pode ser manipulado pelo jogador e afeta os inimigos de maneiras diferentes. 
 
 ## Como Jogar (Regras e Interação)
 

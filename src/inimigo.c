@@ -1,7 +1,6 @@
 #include "../include/inimigo.h"
-#include "../include/Dado.h"
 #include <stdlib.h>
-#include <stdio.h>
+
 
 void inicializarInimigo(Inimigo *inimigo, int vida, int ataque, int defesa) {
     inimigo->vida = vida;

@@ -17,7 +17,7 @@ int rolarDado20() {
         timerUpdateTimer(1);
     }
 
-    return (int )((seed >> 32) % 20) + 1;
+    return (int)((seed >> 32) % 20) + 1;
 }
 // ----------------------------------------------
 

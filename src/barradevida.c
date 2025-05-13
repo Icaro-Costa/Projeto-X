@@ -1,9 +1,5 @@
 #include "../include/screen.h"
-#include "../include/keyboard.h"
-#include "../include/timer.h"
-
 #include <stdio.h>
-#include <unistd.h>
 
 
 void desenharBarraDeVida(int x, int y, int vidaAtual, int vidaMaxima) {

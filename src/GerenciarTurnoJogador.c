@@ -30,19 +30,18 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
     inimigo->defesaAtual = inimigo->defesaBase;
     inimigo->bonusDefesaAtiva = 0;
     // Nota: A raiva do inimigo (nivelRaiva, turnosDeRaivaRestantes) não é resetada aqui.
-    // Isso permite que a raiva persista entre chamadas a esta função, se desejado,
-    // ou deve ser resetada explicitamente antes de iniciar uma nova batalha.
+    // Isso permite que a raiva persista entre chamadas a esta função.
 
     while (*vidaJogador > 0 && *vidaInimigo > 0) { // Loop principal da batalha
         desenharBoxOpcoes(); // Desenha a UI de opções do jogador
 
         // Limpa as linhas de status da tela antes de exibir novas mensagens
         screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1); // Linha de status do jogador
-        printf("                                                                 ");
+        printf("                                                                                                                                               ");
         screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 2); // Linha de status do inimigo
-        printf("                                                                 ");
+        printf("                                                                                                                                               ");
         screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 3); // Linha extra para mensagens
-        printf("                                                                 ");
+        printf("                                                                                                                                               ");
 
         desenharBarraDeVida(2, 14, *vidaJogador, vidaMaximaJogador);
         desenharBarraDeVida(51, 14, *vidaInimigo, inimigo->vidaMaxima);
@@ -51,7 +50,7 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
         if (jogadorAgir) { // Turno do Jogador
             screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
             screenSetColor(WHITE, BLACK);
-            printf("Sua vez! (Q:Atk, W:Def, E:Cura, R:Irrita, X:Sair): ");
+            //printf("Sua vez! (Q:Atk, W:Def, E:Cura, R:Irrita, X:Sair): ");
             screenUpdate();
 
             key = 0;
@@ -140,12 +139,20 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
 
                         default: // Tecla inválida
                             key = 0; // Permanece no loop de espera por input
-                            printf("Tecla inválida! Use Q, W, E, R ou X.                       ");
-                            screenUpdate(); getchar(); // Pausa para ler mensagem de erro
-                            // Re-exibe o prompt de ação
+
+                            // Posiciona na última linha da tela (MAXY)
+                            screenGotoxy(1, MAXY);
+                            screenSetColor(RED, WHITE); // Sugestão: usar uma cor diferente para erro
+                            printf("Tecla inválida! Use Q, W, E, R ou X.                       "); // A mensagem
+                            screenUpdate();
+
+                            usleep(1000000);
+                            screenGotoxy(1, MAXY);
+                            printf("                                                                    ");
+                            // Re-exibe o prompt de ação na linha de status usual
                             screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
                             screenSetColor(WHITE, BLACK);
-                            printf("Sua vez! (Q:Atk, W:Def, E:Cura, R:Irrita, X:Sair): ");
+                            //printf("Sua vez! (Q:Atk, W:Def, E:Cura, R:Irrita, X:Sair): ");
                             screenUpdate();
                             break;
                     }

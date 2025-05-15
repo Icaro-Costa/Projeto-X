@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+// a tela tem que ta em 162 por 52 px
 
 void jogador() {
     jogadorboneco(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);

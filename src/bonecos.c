@@ -42,3 +42,4 @@ void inimigoboneco(int x, int y) {
     screenGotoxy(x, y + 14);printf("                                         ");
 }
 // --------------------------------------------------------
+

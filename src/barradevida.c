@@ -29,5 +29,5 @@ void desenharBarraDeVida(int x, int y, int vidaAtual, int vidaMaxima) {
         printf(" ");
     }
 
-    printf(" %d/%d", vidaAtual, vidaMaxima);
+    printf(" %d/%d", vidaAtual, vidaMaxima  );
 }

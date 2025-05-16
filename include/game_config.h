@@ -32,7 +32,6 @@
 #define OPCAO4_INNER_REL_Y (OPCAO_INNER_HEIGHT / 2 + INNER_PADDING_Y) // Metade da altura interna para a segunda linha
 
 // --- Declaracoes de Variaceis Globais
-// Extern e para declara a variaveis existem em outro lugar
 
 extern char nome_Do_jogador[50];
 
@@ -40,6 +39,8 @@ extern int posicao_X_jogador;
 extern int posicao_Y_jogador;
 extern int vida_Do_jogador;
 extern int vida_Maxima_Do_jogador;
+extern int ataque_Base_Do_Jogador;
+extern int defesa_Base_Do_Jogador;
 extern int posicao_X_jogador_boneco;
 extern int posicao_Y_jogador_boneco;
 extern int vida_X_Jogador;

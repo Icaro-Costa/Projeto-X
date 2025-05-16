@@ -4,25 +4,24 @@
 #include "../include/visual.h"
 #include "../include/inimigo.h"
 #include "../include/barradevida.h"
+#include "../include/gerenciar_xp.h"
 
 #include "../include/GerenciarTurnoInimigo.h"
 #include "../include/GerenciarTurnoJogador.h"
-
+#include "../include/game_config.h"
+#include "../include/gerenciar_dados.h"
 
 #include <stdio.h>
 #include <unistd.h>
 #include <stdbool.h>
 
-#define OPCOES_BOX_START_X 5
-#define OPCOES_BOX_START_Y 16
-#define OPCOES_BOX_WIDTH   70
-#define OPCOES_BOX_HEIGHT  7
 
 int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) {
     int key = 0;
     bool jogadorAgir = true; // Controla se é o turno do jogador de agir
     int vidaMaximaJogador = 100; // Valor fixo para a vida máxima do jogador nesta implementação
-    int defesaAtivaJogador = 4;  // Bônus de defesa do jogador obtido pela ação 'W'
+    int defesaAtivaJogador = 0;  // Bônus de defesa do jogador obtido pela ação 'W' (Inicialmente 0)
+
 
     // Garante que os status ATUAIS do inimigo sejam resetados para os BASE no início da batalha.
     // Importante se a mesma struct Inimigo for reutilizada sem chamar inicializarInimigo novamente.
@@ -35,22 +34,18 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
     while (*vidaJogador > 0 && *vidaInimigo > 0) { // Loop principal da batalha
         desenharBoxOpcoes(); // Desenha a UI de opções do jogador
 
-        // Limpa as linhas de status da tela antes de exibir novas mensagens
-        screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1); // Linha de status do jogador
-        printf("                                                                                                                                               ");
-        screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 2); // Linha de status do inimigo
-        printf("                                                                                                                                               ");
-        screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 3); // Linha extra para mensagens
-        printf("                                                                                                                                               ");
+        // Desenha as barras de vida
+        desenharBarraDeVida(vida_X_Jogador, vida_Y_Jogador, *vidaJogador, vidaMaximaJogador);
+        desenharBarraDeVida(vida_X_Inimigo, vida_Y_Inimigo, *vidaInimigo, inimigo->vidaMaxima);
 
-        desenharBarraDeVida(2, 14, *vidaJogador, vidaMaximaJogador);
-        desenharBarraDeVida(51, 14, *vidaInimigo, inimigo->vidaMaxima);
-        screenUpdate(); // Atualiza a tela com as barras e a box de opções
+        exibirStatusXP(); // Adicionado: Exibe o nível e XP do jogador
+
+        screenUpdate(); // Atualiza a tela com as barras, a box de opções e o status de XP
 
         if (jogadorAgir) { // Turno do Jogador
             screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
             screenSetColor(WHITE, BLACK);
-            //printf("Sua vez! (Q:Atk, W:Def, E:Cura, R:Irrita, X:Sair): ");
+            // O prompt da ação é desenhado pela desenharBoxOpcoes(), não precisa repetir aqui.
             screenUpdate();
 
             key = 0;
@@ -59,6 +54,10 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
                     key = readch();
                     screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1); // Prepara para exibir mensagem da ação
                     screenSetColor(WHITE, BLACK);
+
+                    // Limpa a linha de status antes de imprimir a nova mensagem
+                    printf("                                                                    ");
+                    screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1); // Retorna para a posição
 
                     switch (key) {
                         case 'q': case 'Q': // Ação: Ataque
@@ -105,7 +104,7 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
 
                             printf("Você se curou em %d! Vida atual: %d/%d                     ", curaRecebida, *vidaJogador, vidaMaximaJogador);
                             defesaAtivaJogador = 0;    // Jogador não está mais ativamente defendendo.
-                            inimigo->bonusDefesaAtiva = 0;
+                            inimigo->bonusDefesaAtiva = 0; // Inimigo não está mais defendendo ativamente.
                             jogadorAgir = false;
                             getchar();
                         }
@@ -125,22 +124,24 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
                                 printf("Sua provocação falhou em irritar o inimigo significativamente.");
                             }
                             defesaAtivaJogador = 0;
-                            inimigo->bonusDefesaAtiva = 0;
+                            inimigo->bonusDefesaAtiva = 0; // Inimigo não está mais defendendo ativamente.
                             jogadorAgir = false;
                             getchar();
                         }
                         break;
 
                         case 'x': case 'X': // Sair da batalha
+                            screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
+                            screenSetColor(WHITE, BLACK);
                             printf("Saindo da batalha...                                       ");
-                            screenUpdate(); getchar(); // Pausa para ver mensagem antes do usleep
+                            screenUpdate();
                             usleep(500000); // Pequena pausa antes de efetivamente sair
                             return 0;       // Retorna 0 para indicar saída da batalha
 
                         default: // Tecla inválida
                             key = 0; // Permanece no loop de espera por input
 
-                            // Posiciona na última linha da tela (MAXY)
+                            // Posiciona na última linha da tela (MAXY) para a mensagem de erro
                             screenGotoxy(1, MAXY);
                             screenSetColor(RED, WHITE); // Sugestão: usar uma cor diferente para erro
                             printf("Tecla inválida! Use Q, W, E, R ou X.                       "); // A mensagem
@@ -148,12 +149,8 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
 
                             usleep(1000000);
                             screenGotoxy(1, MAXY);
-                            printf("                                                                    ");
-                            // Re-exibe o prompt de ação na linha de status usual
-                            screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
-                            screenSetColor(WHITE, BLACK);
-                            //printf("Sua vez! (Q:Atk, W:Def, E:Cura, R:Irrita, X:Sair): ");
-                            screenUpdate();
+                            printf("                                                                    "); // Limpa a linha de erro
+
                             break;
                     }
                 }
@@ -161,32 +158,53 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
             }
         }
 
-        if (*vidaInimigo <= 0 || *vidaJogador <= 0) break; // Verifica condição de fim de jogo
+        // Verifica condição de fim de jogo após a ação do jogador
+        if (*vidaInimigo <= 0) { // Verifica se o inimigo foi derrotado
+            adicionarXP(25); // Chama a nova função para gerenciar o XP e o nível
+
+            screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 3);
+            screenSetColor(YELLOW, BLACK);
+            printf("VOCÊ VENCEU A BATALHA!                                            ");
+            screenUpdate();
+            getchar(); // Pausa adicional se necessário
+
+            break; // Sai do loop da batalha já que o inimigo foi derrotado
+        }
+
+        if (*vidaJogador <= 0) { // Verifica se o jogador foi derrotado
+            // Lógica de derrota já existente ou a ser adicionada no Main
+            break; // Sai do loop da batalha
+        }
+
 
         if (!jogadorAgir) { // Turno do Inimigo
             executarTurnoInimigo(inimigo, vidaJogador, vidaMaximaJogador, &defesaAtivaJogador);
             jogadorAgir = true; // Devolve o turno para o jogador
+
+            // Verifica condição de fim de jogo após a ação do inimigo
+            if (*vidaInimigo <= 0 || *vidaJogador <= 0) break;
         }
 
-        if (*vidaInimigo <= 0 || *vidaJogador <= 0) break; // Verifica condição de fim de jogo
+
     }
     // --- Fim da Batalha ---
     screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 3);
     screenSetColor(YELLOW, BLACK); // Destaca mensagem final
     if (*vidaJogador <= 0) {
-        printf("VOCÊ FOI DERROTADO! Pressione Enter para sair.                 ");
+        printf("VOCÊ FOI DERROTADO! Pressione Enter para continuar.                 ");
     } else if (*vidaInimigo <= 0) {
-        printf("VOCÊ VENCEU A BATALHA! Pressione Enter para sair.              ");
-    } else { // Caso de saída prematura por 'X
-        printf("Batalha interrompida. Pressione Enter para sair.             ");
+        // A mensagem de vitória e XP ganho já foi mostrada antes do break.
+        // Limpa a linha ou mostra uma mensagem final simples.
+        printf("Batalha encerrada. Pressione Enter para continuar.                 ");
+    } else { // Caso de saída prematura por 'X'
+        printf("Batalha interrompida. Pressione Enter para continuar.             ");
     }
     screenUpdate();
 
-    // Limpa o buffer de entrada para evitar que inputs residuais afetem o próximo estado do jogo
-    char tempChar;
-    do {
-        tempChar = readch();
-    } while (tempChar != '\n' && tempChar != EOF);
+    while (keyhit()) {
+        readch();
+    }
+
 
     return (*vidaJogador > 0 && *vidaInimigo <= 0) ? 1 : 0; // Retorna 1 se jogador venceu, 0 caso contrário
 }

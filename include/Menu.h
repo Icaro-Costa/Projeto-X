@@ -3,4 +3,8 @@
 
 void ProjetoX();
 
+void Start();
+
+void perda();
+
 #endif

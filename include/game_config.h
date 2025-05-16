@@ -34,12 +34,19 @@
 // --- Declaracoes de Variaceis Globais
 // Extern e para declara a variaveis existem em outro lugar
 
+extern char nome_Do_jogador[50];
+
 extern int posicao_X_jogador;
 extern int posicao_Y_jogador;
 extern int vida_Do_jogador;
 extern int vida_Maxima_Do_jogador;
 extern int posicao_X_jogador_boneco;
 extern int posicao_Y_jogador_boneco;
+extern int vida_X_Jogador;
+extern int vida_Y_Jogador;
+extern int xp_Do_jogador;
+extern int nivel_Do_jogador;
+extern int inimigos_Derrotados;
 
 extern int posicao_X_inimigo;
 extern int posicao_Y_inimigo;
@@ -47,5 +54,7 @@ extern int vida_do_inimigo;
 extern int vida_maxima_do_inimigo;
 extern int posicao_X_inimigo_boneco;
 extern int posicao_Y_inimigo_boneco;
+extern int vida_X_Inimigo;
+extern int vida_Y_Inimigo;
 
 #endif

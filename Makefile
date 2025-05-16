@@ -1,37 +1,28 @@
-# Makefile para o Projeto-X
-
-# Variáveis
 CC = gcc
 CFLAGS = -Wall -g
 INCLUDE_DIR = include
 BUILD_DIR = build
 SRC_DIR = src
-TARGET = $(BUILD_DIR)/testes
+TARGET = $(BUILD_DIR)/testes # Nome do executável final
 
-# Arquivos fonte
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-INCLUDES = -I$(INCLUDE_DIR)   # Caminho para os includes
-
-# Regras
-
-# Regra principal: Compila tudo e cria o executável
+INCLUDES = -I$(INCLUDE_DIR)
 all: $(TARGET)
 
-# Regra para criar o executável
-$(TARGET): $(OBJS)
-	@mkdir -p $(BUILD_DIR) # Cria o diretório build/ se não existir
-	$(CC) $(OBJS) -o $@
+$(BUILD_DIR):
+	@mkdir -p $(BUILD_DIR)
 
-# Regra para compilar arquivos .c para .o
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(BUILD_DIR) # Garante que o diretório build exista
+$(TARGET): $(OBJS) $(BUILD_DIR)
+	@echo "Linking $@"
+	$(CC) $(OBJS) -o $@ -lm #
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(BUILD_DIR)
+	@echo "Compiling $<"
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# Regra para limpar os arquivos gerados
 clean:
+	@echo "Cleaning build directory..."
 	rm -rf $(BUILD_DIR)/*
-	@echo "Arquivos de build limpos."
+	@echo "Build directory cleaned."
 
-# Phony targets (alvos que não representam arquivos)
-.PHONY: all clean
+.PHONY: all clean $(BUILD_DIR)

@@ -33,7 +33,7 @@ void jogadorboneco(int x, int y) {
     screenGotoxy(x, y + 27); printf(" ::::::::::::::::::::::::::::::::##########::::####@@######:::::::::::::::::::::::::::::::");
     screenGotoxy(x, y + 28); printf(" ::::::::::::::::::::::::::::::##MMMMMM####++++####@@MMMMMM++:::::::::::::::::::::::::::::");
     screenGotoxy(x, y + 29); printf(" ::::::::::::::::::::::::::::++############++++############++++:::::::::::::::::::::::::::");
-    // O screenGotoxy(x, y + N) posiciona o texto N linhas abaixo da posição inicial (x, y).
+
 }
 
 void inimigoboneco(int x, int y) {

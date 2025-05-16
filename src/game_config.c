@@ -15,6 +15,9 @@ int posicao_Y_jogador_boneco = 10;
 int vida_X_Jogador = 2;
 int vida_Y_Jogador = 9;
 
+int ataque_Base_Do_Jogador = 10;
+int defesa_Base_Do_Jogador = 5;
+
 int xp_Do_jogador = 0;
 int nivel_Do_jogador = 1;
 int inimigos_Derrotados = 0;

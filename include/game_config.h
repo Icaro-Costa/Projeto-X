@@ -57,5 +57,6 @@ extern int posicao_X_inimigo_boneco;
 extern int posicao_Y_inimigo_boneco;
 extern int vida_X_Inimigo;
 extern int vida_Y_Inimigo;
-
+extern int Ataque_inimigo_Base;
+extern int Defesa_inimigo_Base;
 #endif

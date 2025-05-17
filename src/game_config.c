@@ -28,8 +28,10 @@ int posicao_Y_inimigo = 14;
 int posicao_X_inimigo_boneco = 75;
 int posicao_Y_inimigo_boneco = 10;
 
-int vida_do_inimigo = 150;
-int vida_maxima_do_inimigo = 150;
+int vida_do_inimigo = 100;
+int vida_maxima_do_inimigo = 100;
+int Ataque_inimigo_Base = 10;
+int Defesa_inimigo_Base = 0;
 
 int vida_X_Inimigo = 135;
 int vida_Y_Inimigo = 9;

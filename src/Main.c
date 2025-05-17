@@ -2,12 +2,11 @@
 #include "../include/keyboard.h"
 #include "../include/inimigo.h"
 #include "../include/game_config.h"
-#include "../include/barradevida.h"
 #include "../include/bonecos.h"
 #include "../include/GerenciarTurnoJogador.h"
 #include "../include/Menu.h"
 #include "../include/gerenciar_dados.h"
-#include "../include/gerenciar_xp.h"
+
 
 #include <stdio.h>
 #include <unistd.h>
@@ -15,27 +14,21 @@
 #include <time.h>
 #include <string.h>
 #include <termios.h>
-#include <sys/ioctl.h>
-#include <stdbool.h> // Para usar o tipo bool
-#include <math.h> // Para usar a função pow para o scaling do inimigo
-
-// A tela ideal para este jogo com base nas definições de game_config é de pelo menos 190 colunas por 50 linhas.
-// Verifique as constantes MAXX e MAXY em screen.h.
+#include <stdbool.h>
+#include <math.h>
 
 void menu() {
     screenClear(); // Limpa toda a tela
     screenSetColor( BLUE, BLACK); // Define a cor para o menu
 
-    // Posições para os logos do menu
     int posicao_X_ProjetoX_Menu = 60;
     int posicao_Y_ProjetoX_Menu = 15;
-    ProjetoX(posicao_X_ProjetoX_Menu, posicao_Y_ProjetoX_Menu); // Desenha o logo "Projeto-X"
+    ProjetoX(posicao_X_ProjetoX_Menu, posicao_Y_ProjetoX_Menu);
 
     int posicao_X_Start_Menu = 50;
     int posicao_Y_Start_Menu = 25;
     Start(posicao_X_Start_Menu, posicao_Y_Start_Menu); // Desenha o logo "Start"
 
-    // Mensagem para iniciar o jogo
     screenGotoxy(75, 32); printf("Aperte Enter");
 
     screenUpdate(); // Garante que todo o conteúdo desenhado seja exibido no terminal imediatamente
@@ -78,38 +71,46 @@ void pedirNomeJogador() {
     screenSetColor(WHITE, BLACK); // Define cor para o texto
     screenGotoxy(10, 10); // Posiciona o cursor
 
-    // Mensagem para pedir o nome. Avisa sobre não usar espaços devido à forma de salvamento.
-    printf("Digite o nome do seu heroi (sem espacos, max %d caracteres): ", MAX_NOME_LENGTH - 1);
+    // Mensagem para pedir o nome. Avisa sobre o limite de caracteres.
+    printf("Digite o nome do seu heroi (sem espacos serao considerados, max %d caracteres): ", MAX_NOME_LENGTH - 1); // Mensagem ajustada para indicar que espaços podem não ser lidos dependendo da implementação de leitura (usaremos fgets que lê a linha, mas nosso salvar/carregar usa %s)
+
     screenShowCursor(); // Mostra o cursor para o usuário digitar
 
-    // Usa scanf para ler uma única palavra (sem espaços) para o nome.
-    // Isso é compatível com o formato de salvamento atual que usa %s.
     char input_nome[MAX_NOME_LENGTH];
-    if (scanf("%s", input_nome) == 1) {
-        // Copia o nome lido para a variável global, garantindo que não exceda o tamanho
+
+    if (fgets(input_nome, MAX_NOME_LENGTH, stdin) != NULL) {
+
+        input_nome[strcspn(input_nome, "\n")] = 0;
+
+        // Copia o nome lido (sem a nova linha) para a variável global.
+        // strncpy é usado para garantir que não copiamos mais do que o buffer global permite.
         strncpy(nome_Do_jogador, input_nome, MAX_NOME_LENGTH - 1);
-        nome_Do_jogador[MAX_NOME_LENGTH - 1] = '\0'; // Garante terminação nula na string
+        // Garante que a string global está terminada com nulo, caso strncpy não preencha todo o buffer.
+        nome_Do_jogador[MAX_NOME_LENGTH - 1] = '\0';
+
+        if (strlen(nome_Do_jogador) == 0) {
+            strcpy(nome_Do_jogador, "Heroi");
+            screenGotoxy(10, 12);
+            screenSetColor(RED, BLACK);
+            printf("Nome invalido ou vazio. Usando nome padrao: Heroi\n");
+            screenUpdate();
+            usleep(2000000);
+        }
+
     } else {
-        // Em caso de erro na leitura, define um nome padrão
+
         strcpy(nome_Do_jogador, "Heroi");
         screenGotoxy(10, 12);
         screenSetColor(RED, BLACK);
-        printf("Erro ao ler o nome ou nome invalido. Usando nome padrao: Heroi\n");
+        printf("Erro ao ler o nome. Usando nome padrao: Heroi\n");
         screenUpdate();
+        usleep(2000000);
     }
 
-    // Limpa o restante da linha de entrada (o que ficou no buffer após o scanf)
-    // Isso é importante para não afetar a próxima leitura de input no menu ou jogo.
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-
-
-    // Restaura as configurações originais do terminal (SEM ECHO e SEM ICANON)
     tcsetattr(STDIN_FILENO, TCSANOW, &original_settings);
 
-    screenHideCursor(); // Esconde o cursor novamente
+    screenHideCursor();
 }
-
 
 int main() {
     screenInit(0); // Inicializa a tela (sem bordas, limpa a tela, esconde cursor)
@@ -117,30 +118,21 @@ int main() {
     srand(time(NULL)); // Inicializa a semente para a função rand() com base no tempo atual
 
     pedirNomeJogador(); // Solicita e lê o nome do jogador
-    carregarDadosPorNome(); // Carrega os dados salvos para o nome digitado (ou inicia novos dados se não encontrar)
+    carregarDadosPorNome(); // Carrega os dados salvos para o nome digitado
 
-    menu(); // Exibe o menu principal e espera pelo Enter para iniciar
+    menu();
 
-    screenClear(); // Limpa a tela antes de começar a primeira batalha
-
-    int batalhaAtual = 0; // Contador para saber em qual batalha o jogador está nesta sessão
+    screenClear();
+    int batalhaAtual = 0;
     bool continuarBatalha = true; // Flag para controlar se o loop de batalhas continua
-
-    // Define os atributos base INICIAIS do inimigo para usar como referência para o scaling percentual.
-    // Estes são os atributos do inimigo da Batalha 1.
-    int inimigoInitialBaseVida = 150; // Valor inicial da vida base do inimigo
-    int inimigoInitialBaseAtaque = 10; // Valor inicial do ataque base do inimigo
-    int inimigoInitialBaseDefesa = 10; // Valor inicial da defesa base do inimigo
-
 
     // --- Loop Principal do Jogo (Batalhas Sequenciais) ---
     // O loop continua enquanto o jogador tiver mais de 0 de vida E a flag continuarBatalha for verdadeira.
     while (vida_Do_jogador > 0 && continuarBatalha) {
         batalhaAtual++; // Incrementa o número da batalha atual (começa em 1)
 
-        screenClear(); // Limpa a tela para preparar o cenário da nova batalha
+        screenClear();
 
-        // Desenha o boneco do jogador na sua posição definida em game_config.h
         jogadorboneco(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);
 
         // --- Configura o inimigo para a batalha atual com scaling composto de 10% ---
@@ -149,14 +141,14 @@ int main() {
         // O fator de aumento é 1.10 elevado à potência (batalhaAtual - 1).
         // Isso aplica um aumento aproximado de 10% composto a cada batalha subsequente.
         // Usamos pow() de <math.h> e convertemos o resultado (double) para int.
-        int inimigoBaseVidaCalculado = (int)(inimigoInitialBaseVida * pow(1.10, batalhaAtual - 1));
-        int inimigoBaseAtaqueCalculado = (int)(inimigoInitialBaseAtaque * pow(1.10, batalhaAtual - 1));
-        int inimigoBaseDefesaCalculado = (int)(inimigoInitialBaseDefesa * pow(1.10, batalhaAtual - 1));
+        int inimigoBaseVidaCalculado = (int)(vida_maxima_do_inimigo * pow(1.10, batalhaAtual - 1));
+        int inimigoBaseAtaqueCalculado = (int)(Ataque_inimigo_Base * pow(1.10, batalhaAtual - 1));
+        int inimigoBaseDefesaCalculado = (int)(Defesa_inimigo_Base * pow(1.10, batalhaAtual - 1));
 
-        // Opcional: Garantir que os atributos mínimos sejam pelo menos os iniciais (para evitar problemas de arredondamento com pow se necessário, embora pow(x, 0)=1 resolva para batalha 1).
-        // if (inimigoBaseVidaCalculado < inimigoInitialBaseVida) inimigoBaseVidaCalculado = inimigoInitialBaseVida;
-        // if (inimigoBaseAtaqueCalculado < inimigoInitialBaseAtaque) inimigoBaseAtaqueCalculado = inimigoInitialBaseAtaque;
-        // if (inimigoBaseDefesaCalculado < inimigoInitialBaseDefesa) inimigoBaseDefesaCalculado = inimigoInitialBaseDefesa;
+
+        if (inimigoBaseVidaCalculado < vida_maxima_do_inimigo) inimigoBaseVidaCalculado = vida_maxima_do_inimigo;
+        if (inimigoBaseAtaqueCalculado < Ataque_inimigo_Base) inimigoBaseAtaqueCalculado = Ataque_inimigo_Base;
+        if (inimigoBaseDefesaCalculado < Defesa_inimigo_Base) inimigoBaseDefesaCalculado = Defesa_inimigo_Base;
 
         // Inicializa a estrutura do inimigo para a batalha atual com os atributos calculados
         inicializarInimigo(&inimigoAtual, inimigoBaseVidaCalculado, inimigoBaseAtaqueCalculado, inimigoBaseDefesaCalculado);
@@ -173,7 +165,7 @@ int main() {
         // Chama a função que gerencia a batalha turno a turno.
         // Passamos os endereços das variáveis globais de vida do jogador e do inimigo
         // para que gerenciarTurnoJogador possa modificar diretamente a vida deles.
-        // Não precisamos armazenar o retorno em uma variável local (removido o aviso "unused variable").
+        // Não precisamos armazenar o retorno em uma variável local.
         gerenciarTurnoJogador(&inimigoAtual, &vida_Do_jogador, &vida_do_inimigo);
 
         // --- Lógica pós-batalha ---
@@ -185,9 +177,7 @@ int main() {
             continuarBatalha = false; // Define a flag como falsa para sair do loop principal após esta iteração
             screenClear(); // Limpa a tela
             screenSetColor(RED, BLACK); // Define a cor para mensagens de derrota
-            // A função perda() em Menu.c tem um erro de posicionamento (todos printf usam y + 0).
-            // Se for usar um logo de "Você Perdeu", corrija as posições y dentro dela.
-            // Por enquanto, exibimos uma mensagem simples de texto:
+
             screenGotoxy(60, 15);
             printf("Voce foi derrotado na Batalha %d!", batalhaAtual);
             screenGotoxy(60, 17);

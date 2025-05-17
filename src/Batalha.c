@@ -1,7 +1,7 @@
 #include "../include/Batalha.h"
 #include "../include/screen.h"
 #include "../include/Dado.h"
-#include "../include/game_config.h" // Incluir para acessar ataque_Base_Do_Jogador
+#include "../include/game_config.h"
 
 #include <stdio.h>
 #include <unistd.h>

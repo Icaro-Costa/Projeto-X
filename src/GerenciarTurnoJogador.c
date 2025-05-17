@@ -8,8 +8,7 @@
 
 #include "../include/GerenciarTurnoInimigo.h"
 #include "../include/GerenciarTurnoJogador.h"
-#include "../include/game_config.h" // Incluir para usar as variáveis globais, incluindo vida_Maxima_Do_jogador e os atributos base do jogador
-#include "../include/gerenciar_dados.h" // Incluir se necessário (provavelmente não para esta função, mas incluído anteriormente)
+#include "../include/game_config.h"
 
 #include <stdio.h>
 #include <unistd.h>

@@ -1,8 +1,6 @@
 #include "../include/gerenciar_xp.h"
 #include "../include/game_config.h"
 #include "../include/screen.h"
-#include "../include/keyboard.h"
-
 #include <stdio.h>
 
 void adicionarXP(int quantidadeXP) {

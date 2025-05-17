@@ -1,6 +1,6 @@
 #include "../include/inimigo.h"
 #include <stdlib.h>
-
+#include <stdbool.h>
 
 void inicializarInimigo(Inimigo *inimigo, int vida, int ataque, int defesa) {
     inimigo->vida = vida;
@@ -8,8 +8,8 @@ void inicializarInimigo(Inimigo *inimigo, int vida, int ataque, int defesa) {
 
     inimigo->ataqueBase = ataque;
     inimigo->defesaBase = defesa;
-    inimigo->ataqueAtual = ataque; // Inicialmente, ataque atual é o base
-    inimigo->defesaAtual = defesa; // Inicialmente, defesa atual é a base
+    inimigo->ataqueAtual = ataque;
+    inimigo->defesaAtual = defesa;
 
     inimigo->bonusDefesaAtiva = 0;
 
@@ -31,11 +31,11 @@ int escolherAcaoInimigo(Inimigo *inimigo) {
     }
 
     // --- Lógica de Cura ---
-    // Condição: vida < 40% E nível de raiva < 10 (inimigo muito irritado pode não se curar)
+
     float porcentagemVida = (float)inimigo->vida / inimigo->vidaMaxima;
-    if (porcentagemVida < 0.4f && inimigo->nivelRaiva < 10) {
+    if (porcentagemVida < 0.4f /*&& inimigo->nivelRaiva < 10*/) {
         int chanceDeCurar = rand() % 100;
-        if (chanceDeCurar < 60) { // 60% de chance de escolher curar se as condições forem atendidas
+        if (chanceDeCurar < 60) { // 60% de chance de escolher curar se as condições de vida forem atendidas
             return 2; // Código para Cura
         }
     }
@@ -45,15 +45,15 @@ int escolherAcaoInimigo(Inimigo *inimigo) {
 
     // Se estiver com raiva e os efeitos ainda estiverem ativos
     if (inimigo->nivelRaiva > 10 && inimigo->turnosDeRaivaRestantes > 0) {
-        if (chance < 90) { // 90% de chance de atacar
+        if (chance < 90) { // 90% de chance de atacar (com raiva alta)
             return 0; // Código para Ataque
-        } else { // 10% de chance de defender
+        } else { // 10% de chance de defender (com raiva alta)
             return 1; // Código para Defesa
         }
     } else { // Comportamento com raiva baixa/normal ou sem turnos de raiva restantes
-        if (chance < 65) { // 65% de chance de atacar
+        if (chance < 65) { // 65% de chance de atacar (normal)
             return 0; // Código para Ataque
-        } else { // 35% de chance de defender
+        } else { // 35% de chance de defender (normal)
             return 1; // Código para Defesa
         }
     }

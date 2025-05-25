@@ -33,7 +33,7 @@ int realizarAtaque() {
     danoBruto = ataque_Base_Do_Jogador + dado;
     // -----------------------------------------------------------------------------
 
-    printf("Você atacou! Dano Bruto: %d (Ataque Base: %d + Dado: %d).", danoBruto, ataque_Base_Do_Jogador, dado); // Mensagem atualizada
+  //  printf("Você atacou! Dano Bruto: %d (Ataque Base: %d + Dado: %d).", danoBruto, ataque_Base_Do_Jogador, dado);
     screenUpdate();
     usleep(50000); // Pequena pausa
     return danoBruto; // Retorna o dano bruto calculado (antes das defesas do inimigo)
@@ -52,7 +52,7 @@ int realizarCura() {
     quantidadeCura = 10 + (dado / 2); // Cura base de 10 mais metade do dado
     // Você pode ajustar a fórmula de cura aqui
 
-    printf("Você se curou em %d! (Dado: %d)          ", quantidadeCura, dado); // Mensagem atualizada
+  //  printf("Você se curou em %d! (Dado: %d)          ", quantidadeCura, dado); // Mensagem atualizada
     screenUpdate();
     usleep(50000);
     return quantidadeCura; // Retorna a quantidade de cura aplicada
@@ -65,7 +65,7 @@ int realizarIrritar() {
 
     screenGotoxy(OPCOES_BOX_START_X, OPCOES_BOX_START_Y + OPCOES_BOX_HEIGHT + 1);
     screenSetColor(WHITE, BLACK);
-    printf("Você tenta provocar o inimigo... [%d]", resultadoDado);
+   // printf("Você tenta provocar o inimigo... [%d]", resultadoDado);
     screenUpdate();
     usleep(50000);
 

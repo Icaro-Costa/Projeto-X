@@ -29,12 +29,12 @@ void Start(int x, int y){
 
 void perda(int x, int y) {
 
-screenGotoxy(x, y + 0); printf("#####    #######   ######   ######   #####   ######     ##     ");
-screenGotoxy(x, y + 1); printf("##  ##    ##   #   ##  ##   ##  ##  ##   ##  # ## #    ####    ");
-screenGotoxy(x, y + 2); printf("##   ##   ## #     ##  ##   ##  ##  ##   ##    ##     ##  ##   ");
-screenGotoxy(x, y + 3); printf("##   ##   ####     #####    #####   ##   ##    ##     ##  ##   ");
-screenGotoxy(x, y + 4); printf("##   ##   ## #     ## ##    ## ##   ##   ##    ##     ######   ");
-screenGotoxy(x, y + 5); printf("##  ##    ##   #   ##  ##   ##  ##  ##   ##    ##     ##  ##   ");
-screenGotoxy(x, y + 6); printf("#####     ##   #  ###  ##  ### ##    #####    ####    ##  ##   ");
+screenGotoxy(x, y + 0); printf("#####     #######  ######   ######   #####   ######     ##     ");
+screenGotoxy(x, y + 1); printf("##  ##    ##       ##  ##   ##  ##  ##   ##  # ## #    ####    ");
+screenGotoxy(x, y + 2); printf("##   ##   ##       ##  ##   ##  ##  ##   ##    ##     ##  ##   ");
+screenGotoxy(x, y + 3); printf("##   ##   ######   #####    #####   ##   ##    ##     ##  ##   ");
+screenGotoxy(x, y + 4); printf("##   ##   ##       ## ##    ## ##   ##   ##    ##     ######   ");
+screenGotoxy(x, y + 5); printf("##  ##    ##       ##  ##   ##  ##  ##   ##    ##     ##  ##   ");
+screenGotoxy(x, y + 6); printf("#####     ######   ###  ##  ### ##   #####    ####    ##  ##   ");
 
 }

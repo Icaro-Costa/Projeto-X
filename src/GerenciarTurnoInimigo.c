@@ -3,6 +3,7 @@
 #include "../include/GerenciarTurnoInimigo.h"
 #include "../include/Dado.h"
 #include "../include/game_config.h"
+#include "../include/bonecos.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -56,6 +57,7 @@ void executarTurnoInimigo(Inimigo *inimigo, int *vidaJogador, int vidaMaximaJoga
     switch (acaoInimigo) {
         case 0: // Ataque
         {
+            inimigo_bonecoAtk(posicao_X_inimigo_boneco, posicao_Y_inimigo_boneco);
             // Calcula o dano bruto do ataque do inimigo (Ataque Atual + bônus do dado)
             int bonusDadoAtaqueInimigo = rolarDado20() / 4;
             int danoBrutoInimigo = inimigo->ataqueAtual + bonusDadoAtaqueInimigo; // Declarado e usado localmente
@@ -72,36 +74,37 @@ void executarTurnoInimigo(Inimigo *inimigo, int *vidaJogador, int vidaMaximaJoga
             if (*vidaJogador < 0) *vidaJogador = 0; // A vida do jogador não pode ser negativa
 
             screenGotoxy(OPCOES_BOX_START_X, linhaStatusInimigo);
-            screenSetColor(LIGHTRED, BLACK);
 
-            printf("Inimigo ataca %s! Dano Bruto: %d, Reduzido por voce: %d. Dano Final: %d. Sua Vida: %d/%d                                          ",
-                   msgEfeitoRaiva, // Inclui mensagem de efeito de raiva, se houver
-                   danoBrutoInimigo, reducaoTotalPeloJogador, danoFinalRecebidoPeloJogador, *vidaJogador, vida_Maxima_Do_jogador);
+         //   printf("Inimigo ataca %s! Dano Bruto: %d, Reduzido por voce: %d. Dano Final: %d. Sua Vida: %d/%d                                          ",
+         //          msgEfeitoRaiva, // Inclui mensagem de efeito de raiva, se houver
+          //         danoBrutoInimigo, reducaoTotalPeloJogador, danoFinalRecebidoPeloJogador, *vidaJogador, vida_Maxima_Do_jogador);
 
             *defesaAplicadaPeloJogador = 0; // O bônus de defesa ativa do jogador é consumido após o ataque inimigo.
             getchar(); // Pausa para o jogador ler a mensagem
+            inimigoboneco(posicao_X_inimigo_boneco, posicao_Y_inimigo_boneco);
         }
         break;
 
         case 1: // Defender
         {
-
+            inimigo_bonecoDef(posicao_X_inimigo_boneco, posicao_Y_inimigo_boneco);
             int rolagemDefesaInimigo = rolarDado20();
             inimigo->bonusDefesaAtiva = rolagemDefesaInimigo / 4;
             if (inimigo->bonusDefesaAtiva > 5) inimigo->bonusDefesaAtiva = 5;
 
             screenGotoxy(OPCOES_BOX_START_X, linhaStatusInimigo);
-            screenSetColor(LIGHTRED, BLACK);
 
-            printf("Inimigo se defende %s! Reduzira dano em %d no seu proximo ataque.                                                                    ",
-                   msgEfeitoRaiva,
-                   inimigo->bonusDefesaAtiva);
+        //    printf("Inimigo se defende %s! Reduzira dano em %d no seu proximo ataque.                                                                    ",
+        //           msgEfeitoRaiva,
+        //           inimigo->bonusDefesaAtiva);
             getchar();
+            inimigoboneco(posicao_X_inimigo_boneco, posicao_Y_inimigo_boneco);
         }
         break;
 
         case 2: // Curar
         {
+            inimigoboneco(posicao_X_inimigo_boneco, posicao_Y_inimigo_boneco);
             int curaBaseInimigo = 0;
 
             if (inimigo->vidaMaxima > 0) {
@@ -117,11 +120,10 @@ void executarTurnoInimigo(Inimigo *inimigo, int *vidaJogador, int vidaMaximaJoga
             }
 
             screenGotoxy(OPCOES_BOX_START_X, linhaStatusInimigo);
-            screenSetColor(LIGHTRED, BLACK);
 
-            printf("Inimigo %s se curou em %d! Vida Inimigo: %d/%d                                                            ",
-                   msgEfeitoRaiva,
-                   curaTotalInimigo, inimigo->vida, inimigo->vidaMaxima);
+           // printf("Inimigo %s se curou em %d! Vida Inimigo: %d/%d                                                            ",
+           //        msgEfeitoRaiva,
+          //         curaTotalInimigo, inimigo->vida, inimigo->vidaMaxima);
             getchar();
         }
         break;

@@ -5,6 +5,7 @@
 #include "../include/inimigo.h"
 #include "../include/barradevida.h"
 #include "../include/gerenciar_xp.h"
+#include "../include/bonecos.h"
 
 #include "../include/GerenciarTurnoInimigo.h"
 #include "../include/GerenciarTurnoJogador.h"
@@ -68,6 +69,9 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
                     switch (key) {
                         case 'q': case 'Q': // Ação: Ataque
                         {
+
+                            inimigo_bonecoAtk(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);
+
                             int danoBrutoJogador = realizarAtaque(); // Dano bruto calculado em Batalha.c (Ataque Base + Dado)
                             // Redução de dano pelo inimigo: passiva (baseada na defesaAtual do inimigo) + ativa (bônus da ação de defesa do inimigo)
                             int reducaoPassivaInimigo = inimigo->defesaAtual / 5; // Exemplo de redução baseada na defesa atual do inimigo
@@ -78,36 +82,44 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
                             *vidaInimigo -= danoLiquidoAoInimigo; // Aplica o dano no inimigo
                             if (*vidaInimigo < 0) *vidaInimigo = 0; // Vida do inimigo não pode ser negativa
 
-                            printf("Você atacou! Dano: %d (Inimigo Reduziu: %d). Vida Inimigo: %d/%d",
-                                   danoLiquidoAoInimigo, reducaoTotalPeloInimigo, *vidaInimigo, inimigo->vidaMaxima);
+                           // printf("Você atacou! Dano: %d (Inimigo Reduziu: %d). Vida Inimigo: %d/%d",
+                           //        danoLiquidoAoInimigo, reducaoTotalPeloInimigo, *vidaInimigo, inimigo->vidaMaxima);
 
                             inimigo->bonusDefesaAtiva = 0; // Bônus de defesa ativa do inimigo é consumido após o ataque.
                             defesaAtivaJogador = 0;    // Jogador não está mais ativamente defendendo após atacar.
                             jogadorAgir = false;       // Fim do turno do jogador
                             getchar();                 // Pausa para o jogador ler a mensagem
+                            jogadorboneco(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);
                         }
                         break;
 
                         case 'w': case 'W': // Ação: Defender
                         {
+
+                            jogador_bonecoDef(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);
+
                             int rolagemDefesa = realizarDefesa(); // Retorna D20
                             defesaAtivaJogador = rolagemDefesa / 4; // Converte D20 em bônus de redução (ex: 0-5)
                             if (defesaAtivaJogador > 5) defesaAtivaJogador = 5; // Limita o bônus de defesa ativa do jogador
 
-                            printf("Você se defende! Redução de dano: %d no próximo ataque.", defesaAtivaJogador);
+                          //  printf("Você se defende! Redução de dano: %d no próximo ataque.", defesaAtivaJogador);
                             // O bônus de defesa ativa do inimigo (inimigo->bonusDefesaAtiva) não é resetado aqui.
                             jogadorAgir = false; // Fim do turno do jogador
                             getchar(); // Pausa para o jogador ler
+                            jogadorboneco(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);
                         }
                         break;
 
                         case 'e': case 'E': // Ação: Curar
                         {
+
+                            jogadorboneco(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);
+
                             int curaRecebida = realizarCura(); // Quantidade de cura baseada no D20 e fórmula em Batalha.c
                             *vidaJogador += curaRecebida; // Aplica a cura na vida do jogador
                             if (*vidaJogador > vida_Maxima_Do_jogador) *vidaJogador = vida_Maxima_Do_jogador; // Não exceder vida máxima global
 
-                            printf("Você se curou em %d! Vida atual: %d/%d                     ", curaRecebida, *vidaJogador, vida_Maxima_Do_jogador); // Usa vida máxima global na mensagem
+                          //  printf("Você se curou em %d! Vida atual: %d/%d                     ", curaRecebida, *vidaJogador, vida_Maxima_Do_jogador); // Usa vida máxima global na mensagem
                             defesaAtivaJogador = 0;    // Jogador não está mais ativamente defendendo.
                             inimigo->bonusDefesaAtiva = 0; // O bônus de defesa ativa do inimigo é consumido pela ação do jogador (mesmo que não seja ataque direto).
                             jogadorAgir = false; // Fim do turno do jogador
@@ -117,6 +129,8 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
 
                         case 'r': case 'R': // Ação: Irritar
                         {
+                            jogadorboneco(posicao_X_jogador_boneco, posicao_Y_jogador_boneco);
+
                             int sucessoIrritar = realizarIrritar(); // Retorna D20 para avaliar o sucesso da provocação
                             if (sucessoIrritar > 10) { // Limiar de sucesso para irritar (exemplo: rolagem > 10)
                                 int aumentoRaiva = (sucessoIrritar - 10) / 2; // Calcula aumento da raiva (ex: 0-5)
@@ -124,9 +138,9 @@ int gerenciarTurnoJogador(Inimigo *inimigo, int *vidaJogador, int *vidaInimigo) 
                                 inimigo->nivelRaiva += aumentoRaiva; // Aumenta o nível de raiva do inimigo
                                 if (inimigo->nivelRaiva > 20) inimigo->nivelRaiva = 20; // Limite máximo de raiva
                                 inimigo->turnosDeRaivaRestantes = 3;                    // Define a duração dos efeitos da raiva (ex: 3 turnos)
-                                printf("Você irritou o inimigo! Raiva dele: %d. Efeitos por %d turnos.", inimigo->nivelRaiva, inimigo->turnosDeRaivaRestantes);
+                              //  printf("Você irritou o inimigo! Raiva dele: %d. Efeitos por %d turnos.", inimigo->nivelRaiva, inimigo->turnosDeRaivaRestantes);
                             } else {
-                                printf("Sua provocação falhou em irritar o inimigo significativamente.");
+                          //      printf("Sua provocação falhou em irritar o inimigo significativamente.");
                             }
                             defesaAtivaJogador = 0; // Jogador não está mais ativamente defendendo.
                             inimigo->bonusDefesaAtiva = 0; // O bônus de defesa ativa do inimigo é consumido.

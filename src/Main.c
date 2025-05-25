@@ -117,10 +117,12 @@ int main() {
     keyboardInit(); // Inicializa o modo de leitura de teclado (sem buffer, sem echo, leitura imediata)
     srand(time(NULL)); // Inicializa a semente para a função rand() com base no tempo atual
 
+     menu();
+
     pedirNomeJogador(); // Solicita e lê o nome do jogador
     carregarDadosPorNome(); // Carrega os dados salvos para o nome digitado
 
-    menu();
+
 
     screenClear();
     int batalhaAtual = 0;
@@ -179,9 +181,8 @@ int main() {
             screenSetColor(RED, BLACK); // Define a cor para mensagens de derrota
 
             screenGotoxy(60, 15);
-            printf("Voce foi derrotado na Batalha %d!", batalhaAtual);
-            screenGotoxy(60, 17);
-            printf("Seu progresso final: Nivel %d, XP %d, Inimigos Derrotados %d", nivel_Do_jogador, xp_Do_jogador, inimigos_Derrotados);
+            perda(55, 25);
+            screenGotoxy(55, 30 + 7); printf("Seu progresso final: Nivel %d, XP %d, Inimigos Derrotados %d", nivel_Do_jogador, xp_Do_jogador, inimigos_Derrotados);
             screenUpdate(); // Exibe as mensagens de derrota e progresso final
             // Limpa o buffer do teclado para garantir que o próximo getchar espere uma nova tecla
             while (keyhit()) { readch(); }
